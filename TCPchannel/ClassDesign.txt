@@ -1,0 +1,68 @@
+/**********************************************
+_______________#########_______________________
+______________############_____________________
+______________#############____________________
+_____________##__###########___________________
+____________###__######_#####__________________
+____________###_#######___####_________________
+___________###__##########_####________________
+__________####__###########_####_______________
+________#####___###########__#####_____________
+_______######___###_########___#####___________
+_______#####___###___########___######_________
+______######___###__###########___######_______
+_____######___####_##############__######______
+____#######__#####################_#######_____
+____#######__##############################____
+___#######__######_#################_#######___
+___#######__######_######_#########___######___
+___#######____##__######___######_____######___
+___#######________######____#####_____#####____
+____######________#####_____#####_____####_____
+_____#####________####______#####_____###______
+______#####_______###________###______#________
+________##_______####________####______________
+***********************************************/
+May The Goddess of Creator bless my code!
+
+
+Single thread I/O Multiplexing using io_uring
+
+Main Class
+include
+|-- EventLoop.h  (The Core event loop)
+|-- Ring.h       (Monitor expected event and return occurred event)
+|-- Channel.h    (include event associated fd and handle received event)
+|-- TCPsocket.h  (General tpye of tcp socket)
+|-- TCPserver.h  (One accept connection and maintain all activate connections)
+\-- Acceptor.h   (One specifically used by server to accept connection)
+
+EventLoop
+|-- Ring *       (Work as epoll to monitor and return events)
+|-- ChannelList  (A vector of all channel registered in Ring. One Channel one fd)
+\-- Channel *    (Current activate channel which is now handling events)
+
+Ring
+|-- int ringfd   (File descriptor of io_uring instance)
+|-- cqeList      (A list of occurred events)
+\-- EventLoop *  (Associated EventLoop. One EventLoop one Ring)
+
+Channel
+|-- int fd             (Associated file descriptor)
+|-- int interestEvent  (The type of events which this channel expect to monitor)
+|-- int receivedEvent  (The type of evnets received from the ring)
+|-- int registerFlag   (Mainly used to indicate if channel has been registered in Ring)
+\-- EventLoop *        (Associated EventLoop)
+
+Acceptor
+|-- TCPsocket    (Socket used for accepting connections)
+|-- Channel *    (Associated Channel. Events on Acceptor need to be monitored)
+\-- EventLoop *  (Associated EventLoop. Is this necessary?) 
+
+TCPsocket        (General TCP socket type can be easily used)
+\-- int fd
+
+TCPserver
+|-- String address  (Address of server indicated in string format)
+|-- Acceptor *      (Associated Acceptor)
+\-- ConnectionMap   (A map of all activate connections)
