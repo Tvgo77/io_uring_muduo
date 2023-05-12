@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "unistd.h": "c",
+        "stat.h": "c",
+        "limits": "c",
+        "string.h": "c",
+        "liburing.h": "c",
+        "io_uring.h": "c"
+    }
+}

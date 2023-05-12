@@ -1,0 +1,30 @@
+{
+    "configurations": [
+    {
+        "preLaunchTask": "Build uring",
+        "name": "gdb uring",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+        "args": ["test_text.txt"],
+        "stopAtEntry": false,
+        "cwd": "${fileDirname}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+        "setupCommands": [
+            // {
+            //     "description": "Enable pretty-printing for gdb",
+            //     "text": "python import sys; sys.path.insert(0, '/usr/share/glib-2.0/gdb/'); import glib_gdb",
+            //     "ignoreFailures": false
+            // },
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+    }
+    ]
+}
