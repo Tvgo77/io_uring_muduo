@@ -24,7 +24,7 @@ void EventLoop::loop() {
         activateEvents.clear();
 
         /* Use Ring to monitor events occurring */
-        uring->monitor(waitTimeMs, &activateEvents);
+        uring->monitor(waitTimeSec, &activateEvents);
 
         /* Handle received Events*/
         for (Event event: activateEvents) {

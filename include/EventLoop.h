@@ -10,7 +10,7 @@ typedef std::vector<struct io_uring_cqe*> EventList;
 typedef struct io_uring_cqe* Event;
 
 class EventLoop {
-  const int waitTimeMs = 10000;
+  const int waitTimeSec = 10;
 
   private:  // Private member variables.
     std::unique_ptr<Ring> uring;  // Work as epoll to monitor and return events
