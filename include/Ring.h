@@ -1,3 +1,5 @@
+#pragma once
+
 #include <include/EventLoop.h>
 #include <liburing.h>
 #include <vector>
