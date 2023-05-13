@@ -39,7 +39,7 @@ include
 
 EventLoop
 |-- Ring *       (Work as epoll to monitor and return events)
-|-- ChannelList  (A vector of all channel registered in Ring. One Channel one fd)
+|-- ChannelList  (A vector of channels which have a event to handle . One Channel one fd)
 \-- Channel *    (Current activate channel which is now handling events)
 
 Ring
