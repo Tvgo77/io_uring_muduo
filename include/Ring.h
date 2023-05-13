@@ -1,11 +1,7 @@
+#include <include/EventLoop.h>
 #include <liburing.h>
 #include <vector>
 #include <map>
-
-class EventLoop;
-class Channel;
-
-typedef std::vector<Channel> ChannelList;
 
 
 class Ring {
