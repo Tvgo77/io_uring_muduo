@@ -50,9 +50,9 @@ Ring
 
 Channel
 |-- int fd             (Associated file descriptor)
-|-- interestEvents     (A set of event types which this channel expect to monitor)
-|   |-- int eventType      (The type of event)
-|   \-- bool isMonitoring  (Indicate if this event is now being monitored)
+|-- interestEvents     (A map of event types which this channel expect to monitor)
+|   |-- key: int eventType      (The type of event)
+|   \-- value: bool isMonitoring  (Indicate if this event is now being monitored)
 |
 |-- int receivedEvent  (The type of events received from the ring. Handle one event one time)
 |-- int returnVal      (The return value of the submitted system call. Usally an int)

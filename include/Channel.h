@@ -1,19 +1,15 @@
 #pragma once
 
 #include <include/EventLoop.h>
-#include <set>
+#include <map>
 
-struct InterestEvent {
-  int eventType;      // The type of event
-  bool isMonitoring;  // Indicate if this event is now being monitored
-};
 
-typedef std::set<InterestEvent> InterestEventSet;
+typedef std::map<int, bool> InterestEventMap;
 
 class Channel {
   private:
     const int fd;  // Associated file descriptor
-    InterestEventSet interestEvents;  // A set of event types which this channel expect to monitor
+    InterestEventMap interestEvents;  // A set of event types which this channel expect to monitor
     int receivedEvent;   // The type of events received from the ring
     int returnVal;  // The return value of the submitted system call. Usally an int
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap
@@ -46,5 +42,8 @@ class Channel {
     /* Set receivedEvent number*/
     void set_receivedEvent(int eventType) { receivedEvent = eventType;}
     void set_returnVal(int result) { returnVal = result;}
+    void set_isMonitoring(int eventType, bool isMonitoring) {
+      interestEvents[eventType] = isMonitoring;
+    }
 
 };
