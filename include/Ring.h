@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#define MAX_EVENT 256
 
 class Ring {
   typedef std::vector<struct io_uring_cqe *> CqeList;
