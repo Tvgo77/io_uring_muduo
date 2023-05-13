@@ -39,8 +39,8 @@ include
 
 EventLoop
 |-- Ring *       (Work as epoll to monitor and return events)
-|-- ChannelList  (A vector of channels which have a event to handle . One Channel one fd)
-\-- Channel *    (Current activate channel which is now handling events)
+|-- EventList    (A vector of events to handle. One Channel one fd)
+\-- Event *      (Current handling event)
 
 Ring
 |-- int ringfd   (File descriptor of io_uring instance)
@@ -50,9 +50,12 @@ Ring
 
 Channel
 |-- int fd             (Associated file descriptor)
-|-- int interestEvent  (The type of events which this channel expect to monitor)
-|-- int receivedEvent  (The type of evnets received from the ring)
-|-- int registerFlag   (Mainly used to indicate if channel has been registered in Ring)
+|-- interestEvents     (A set of event types which this channel expect to monitor)
+|   |-- int eventType      (The type of event)
+|   \-- bool isMonitoring  (Indicate if this event is now being monitored)
+|
+|-- int receivedEvent  (The type of events received from the ring. Handle one event one time)
+|-- int registerFlag   (Mainly used to indicate if channel has been added to a Ring's ChannelMap)
 \-- EventLoop *        (Associated EventLoop)
 
 Acceptor
