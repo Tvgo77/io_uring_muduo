@@ -44,7 +44,7 @@ EventLoop
 
 Ring
 |-- int ringfd   (File descriptor of io_uring instance)
-|-- cqeList      (A list of occurred events)
+|-- CqeList      (A list of occurred events)
 |-- EventLoop *  (Associated EventLoop. One EventLoop one Ring)
 \-- ChannelMap   (A map of all monitoring Channel)
 

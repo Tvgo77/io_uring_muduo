@@ -7,12 +7,12 @@
 
 
 class Ring {
-  typedef std::vector<struct io_uring_cqe> cqeList;
+  typedef std::vector<struct io_uring_cqe *> CqeList;
   typedef std::map<int, Channel> ChannelMap;  // int Key is the fd number of Channel
 
   private:  // private member variable
     int ringfd;
-    cqeList eventList;
+    CqeList eventList;
     EventLoop* ownerLoop;
     ChannelMap channelDict;
 
@@ -31,7 +31,7 @@ class Ring {
 
     /* Monitor events occurred in channel. 
     Fill Channels which get a event into active channelList of EventLoop */
-    void monitor(int timeoutMs, ChannelList* activeChannels);
+    void monitor(int timeoutMs, EventList* activeEvents);
 
     private:  // private member function
 
