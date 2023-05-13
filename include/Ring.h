@@ -7,6 +7,12 @@
 
 #define MAX_EVENT 256
 
+/* EventOwner is used for cqe to determine its owner and event type*/
+struct EventOwner {
+  Channel* channel;
+  int eventType;
+};
+
 class Ring {
   typedef std::vector<struct io_uring_cqe *> CqeList;
   typedef std::map<int, Channel> ChannelMap;  // int Key is the fd number of Channel
