@@ -49,7 +49,10 @@ int main() {
     io_uring_wait_cqe(&ring, &cqe);  // This function will block until at least one event returned
     // This function return the number of occurred events and make ptr point to first one
     // And it never block
-    int count = io_uring_peek_batch_cqe(&ring, cqeList, 5);
+    int count1 = io_uring_peek_batch_cqe(&ring, cqeList, 5);
+    io_uring_cqe_seen(&ring, &cqeList[0]);
+    io_uring_cqe_seen(&ring, &cqeList[1]);
+    int count2 = io_uring_peek_batch_cqe(&ring, cqeList, 5);
     struct io_uring_cqe cqe_copy = *cqe;
     struct io_uring_cqe cqe1 = *(cqeList[0]);
     struct io_uring_cqe cqe2 = *(cqeList[1]);
