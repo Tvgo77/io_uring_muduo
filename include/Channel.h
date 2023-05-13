@@ -12,7 +12,7 @@ typedef std::set<InterestEvent> InterestEventSet;
 
 class Channel {
   private:
-    int fd;  // Associated file descriptor
+    const int fd;  // Associated file descriptor
     InterestEventSet interestEvents;  // A set of event types which this channel expect to monitor
     int receivedEvent;   // The type of events received from the ring
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap
@@ -36,4 +36,7 @@ class Channel {
     /* Handle read and write*/
     void handleRead() const;
     void handleWrite() const;
+
+    /* Set receivedEvent number*/
+    void set_receivedEvent(int eventType) { receivedEvent = eventType;}
 };
