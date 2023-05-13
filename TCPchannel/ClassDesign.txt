@@ -55,6 +55,7 @@ Channel
 |   \-- bool isMonitoring  (Indicate if this event is now being monitored)
 |
 |-- int receivedEvent  (The type of events received from the ring. Handle one event one time)
+|-- int returnVal      (The return value of the submitted system call. Usally an int)
 |-- int registerFlag   (Mainly used to indicate if channel has been added to a Ring's ChannelMap)
 \-- EventLoop *        (Associated EventLoop)
 
