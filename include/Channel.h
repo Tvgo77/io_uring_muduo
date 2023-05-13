@@ -31,6 +31,9 @@ class Channel {
     void enable_accept();
     void disable_accept();
 
+    /* Submit interest event*/
+    void submit_events();
+
     /* Handle received event*/
     void handle_event();
 
@@ -46,4 +49,6 @@ class Channel {
       interestEvents[eventType] = isMonitoring;
     }
 
+    /* Get channel's fd number*/
+    int get_fd() const { return fd;}
 };

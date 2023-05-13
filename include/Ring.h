@@ -38,7 +38,10 @@ class Ring {
 
     /* Monitor events occurred in channel. 
     Fill Channels which get a event into active channelList of EventLoop */
-    void monitor(int timeoutMs, EventList* activeEvents, int* numEvents);
+    void monitor(int timeoutMs, EventList* activeEvents, int* numEventsPtr);
+
+    /* Debug and Test use*/
+    int submitNum = 0;
 
     private:  // private member function
 

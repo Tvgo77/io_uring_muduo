@@ -19,7 +19,7 @@ void EventLoop::loop() {
     while (!quitFlag) {
         /* Log loop start*/
         ++iteration;
-        ::printf("Log: Loop %d start!\n", iteration);
+        ::printf("Log: ----------Loop %d start!----------\n", iteration);
 
         // /* Clear activateEvents*/
         // activateEvents.clear();
@@ -50,7 +50,7 @@ void EventLoop::loop() {
         }
 
         /* Log loop end*/
-        ::printf("Log: Loop %d end!\n", iteration);
+        ::printf("Log: -----------Loop %d end!------------\n", iteration);
     }
 }
 
