@@ -15,10 +15,10 @@ struct EventOwner {
 
 class Ring {
   typedef std::vector<struct io_uring_cqe *> CqeList;
-  typedef std::map<int, Channel> ChannelMap;  // int Key is the fd number of Channel
+  typedef std::map<int, Channel*> ChannelMap;  // int Key is the fd number of Channel
 
   private:  // private member variable
-    int ringfd;
+    struct io_uring ring;
     CqeList eventList;
     EventLoop* ownerLoop;
     ChannelMap channelDict;
@@ -28,17 +28,17 @@ class Ring {
     ~Ring();
 
     /* Add a channel to io_uring for monitoring events*/
-    void addChannel(const Channel* channel);
+    void addChannel(Channel* channel);
     
     /* Modify a channel in io_uring to change monitoring settings*/
     void updateChannel(const Channel* channel) { ; }  // Not implemented now
 
     /* Remove a channle in io_uring*/
-    void removeChannel(const Channel* channel);
+    void removeChannel(Channel* channel);
 
     /* Monitor events occurred in channel. 
     Fill Channels which get a event into active channelList of EventLoop */
-    void monitor(int timeoutMs, EventList* activeEvents);
+    void monitor(int timeoutMs, EventList* activeEvents, int* numEvents);
 
     private:  // private member function
 

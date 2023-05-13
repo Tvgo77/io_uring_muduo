@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 
-typedef std::vector<struct io_uring_cqe*> EventList;
+typedef struct io_uring_cqe** EventList;
 typedef struct io_uring_cqe* Event;
 
 class EventLoop {
@@ -14,7 +14,8 @@ class EventLoop {
 
   private:  // Private member variables.
     std::unique_ptr<Ring> uring;  // Work as epoll to monitor and return events
-    EventList activateEvents;  // A vector of events which have occurred and been monitored
+    EventList activateEvents;  // A pointer to vector of events which have occurred
+    int numEvents;  // The number of events of vector that pointer points to
     Event currentEvent;      // Current handling event
     Channel* currentChannel;  // Current activate Channel
 

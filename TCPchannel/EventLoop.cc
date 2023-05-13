@@ -3,7 +3,8 @@
 
 EventLoop::EventLoop() 
   : uring(new Ring(this)),
-    activateEvents(EventList(MAX_EVENT)),
+    activateEvents(nullptr),
+    numEvents(0),
     currentEvent(nullptr) {
     ::printf("Log: EventLoop Construct\n");
 }
@@ -20,15 +21,16 @@ void EventLoop::loop() {
         ++iteration;
         ::printf("Log: Loop %d start!\n", iteration);
 
-        /* Clear activateEvents*/
-        activateEvents.clear();
+        // /* Clear activateEvents*/
+        // activateEvents.clear();
 
         /* Use Ring to monitor events occurring */
-        uring->monitor(waitTimeSec, &activateEvents);
+        uring->monitor(waitTimeSec, &activateEvents, &numEvents);
 
         /* Handle received Events*/
-        for (Event event: activateEvents) {
-            currentEvent = event;
+        // for (Event event: activateEvents) {
+        for (int i = 0; i < numEvents; i++) {
+            currentEvent = activateEvents[i];
 
             /* Get event assocaited Channel */
             EventOwner* eventOwner = (EventOwner*) currentEvent->user_data;
@@ -38,7 +40,7 @@ void EventLoop::loop() {
             currentChannel->set_receivedEvent(eventOwner->eventType);
 
             /* Set returnVal of Channel */
-            currentChannel->set_returnVal(event->res);
+            currentChannel->set_returnVal(currentEvent->res);
 
             /* Unset isMonitoring flag of this event type */
             currentChannel->set_isMonitoring(eventOwner->eventType, false);
