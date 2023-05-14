@@ -1,0 +1,169 @@
+#include <include/Channel.h>
+#include <string>
+
+
+Channel::Channel(EventLoop* loop, int fdNum) 
+  : fd(fdNum),
+    interestEvents(),
+    sqeList(MAX_EVENT, nullptr),
+    eventOwners(MAX_EVENT, {this, 0}),
+    receivedEvent(0),
+    returnVal(0),
+    registerFlag(0),
+    buffer(this),
+    ownerLoop(loop) {;}
+
+Channel::~Channel() {;}
+
+void Channel::enable_read() {
+    interestEvents[EVENT_READ] = false;
+
+    /* Have not added to a ring*/
+    if (registerFlag == NEW) {
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->addChannel(this);
+        registerFlag = ADDED;
+    }
+
+    /* Already in the ring*/
+    else if (registerFlag == ADDED) {
+        // Do nothing
+    }
+}
+
+void Channel::disable_read() {
+    interestEvents.erase(EVENT_READ);
+
+    /* If no interestEvents, remove it from Ring*/
+    if (interestEvents.empty()) {
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+        registerFlag = NEW;
+    }
+}
+
+void Channel::enable_accept() {
+    interestEvents[EVENT_ACCEPT] = false;
+
+    /* Have not added to a ring*/
+    if (registerFlag == NEW) {
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->addChannel(this);
+        registerFlag = ADDED;
+    }
+}
+
+void Channel::disable_accept() {
+    interestEvents.erase(EVENT_ACCEPT);
+
+    /* If no interestEvents, remove it from Ring */
+    if (interestEvents.empty()) {
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+        registerFlag = NEW;
+    }
+}
+
+void Channel::submit_events() {
+    /* Submit all interest event if it's not being monitored*/
+    int i = 0;  // for loop count
+    auto ring = ownerLoop->get_ring_ptr();
+    for (auto pair: interestEvents) {
+        if (pair.second == false) {
+            sqeList[i] = ::io_uring_get_sqe(ring->get_io_uring_ptr());
+            switch (pair.first) {  // May change to use map if too many event types
+                case EVENT_READ:
+                    /* Read data to inner buffer */
+                    ::io_uring_prep_read(sqeList[i], fd, buffer.writePtr(), BUF_SIZE/2, 0);
+
+                    /* Set user_data points to eventOwner */
+                    eventOwners[i].eventType = EVENT_READ;
+                    io_uring_sqe_set_data(sqeList[i], &eventOwners[i]);
+
+                    /* Change state to isMonitoring == true */
+                    pair.second = true;
+
+                    /* Log preparing complete */  
+                    printf("Log: fd %d read event prepared\n", fd);
+                    break;
+                case EVENT_WRITE:
+                    break;
+                case EVENT_ACCEPT:
+                    break;
+                default:
+                    break;    
+            }
+        }
+    }
+}
+
+void Channel::handle_event() {
+    switch (receivedEvent) {  // Change switch to map if there are too many event types
+        case EVENT_READ:
+            handle_read();
+            break;
+        case EVENT_WRITE:
+            handle_write();
+            break;
+        case EVENT_ACCEPT:
+            handle_accept();
+            break;
+        default:
+            break;
+    }
+}
+
+void Channel::handle_read() {
+    /* returnVal means the number of bytes read*/
+    /* Error handling*/
+    if (returnVal < 0) {
+        printf("Error: fd %d read error occured\n");
+
+        /* Remove channel from ring*/
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+
+        /* Close related fd*/
+        ::close(fd);
+
+        /* Check if "this" pointer is the last one pointed to Channel*/
+    }
+
+    else if (returnVal == 0) {
+        printf("Log: fd %d EOF detect. Close socket and remove Channel\n");
+
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+
+        ::close(fd);
+    }
+
+    else if (returnVal > 0) {
+        /* Add buffer's writeIndex */
+        buffer.add_writeIndex(returnVal);
+
+        /* Read buffer */
+        char buf[BUF_SIZE];
+        int nbytes_1 = buffer.read_unprocessed(buf);
+        int nbytes_2 = buffer.readN(buf+nbytes_1, BUF_SIZE/2);
+
+        /* Do echo for every line*/
+        int stringHeadIndex = 0;
+        int i = 0;
+        for (i = 0; i < nbytes_1 + nbytes_2; i++) {
+            if (buf[i] != '\n')
+                continue;
+            else {
+                std::string message(&buf[stringHeadIndex], i - stringHeadIndex + 1);
+                ::write(fd, &message[0], message.size());  // Send echo message back;
+                stringHeadIndex = i + 1;
+            }
+        }
+
+        /* Save unprocessed data into buffer */
+        buffer.write_unprocessed(&buf[stringHeadIndex], i - stringHeadIndex);
+    }
+}
+
+
+

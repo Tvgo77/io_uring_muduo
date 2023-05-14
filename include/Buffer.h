@@ -26,7 +26,7 @@ class Buffer {
     ~Buffer() {}
 
 
-    int readN(int n, void* outerBuf) {
+    int readN(void* outerBuf, int n) {
       int nbytes = 0;  // Record how many bytes are read, then return it
       if (n > writeIndex - readIndex) {
         nbytes = writeIndex - readIndex;
@@ -52,6 +52,13 @@ class Buffer {
       int nbytes = unprocessBytes;
       unprocessBytes = 0;
       return nbytes;
+    }
+
+    /* Write nbytes to unprocessData from outerBuf */
+    int write_unprocessed(void* outerBuf, int nbytes) {
+      ::memcpy(&unprocessData[0], outerBuf, nbytes);
+      unprocessBytes = nbytes;
+      return unprocessBytes;
     }
 
     /* Add writeIndex */

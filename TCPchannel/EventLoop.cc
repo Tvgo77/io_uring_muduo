@@ -47,6 +47,10 @@ void EventLoop::loop() {
 
             /* Handle event*/
             currentChannel->handle_event();
+
+            /* Mark this cqe as seen */
+            auto ring = uring->get_io_uring_ptr();
+            ::io_uring_cqe_seen(ring, currentEvent);
         }
 
         /* Log loop end*/
