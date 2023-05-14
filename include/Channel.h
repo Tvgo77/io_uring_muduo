@@ -1,6 +1,7 @@
 #pragma once
 
 #include <include/EventLoop.h>
+#include <include/Buffer.h>
 #include <map>
 
 /* Macro define for Event type*/
@@ -21,9 +22,11 @@ class Channel {
     const int fd;  // Associated file descriptor
     InterestEventMap interestEvents;  // A set of event types which this channel expect to monitor
     SqeList sqeList;
+    std::vector<EventOwner> eventOwners;
     int receivedEvent;   // The type of events received from the ring
     int returnVal;  // The return value of the submitted system call. Usally an int
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap
+    Buffer buffer;
     EventLoop* ownerLoop;  // Associated EventLoop
 
   public:
