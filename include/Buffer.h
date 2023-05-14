@@ -6,10 +6,10 @@
 
 class Buffer {
   private:
-    std::vector<char> buf;
-    int readIndex;
-    int writeIndex;
-    Channel* ownerChannel;
+    std::vector<char> buf;  // A vector of char used for storing buffer data
+    int readIndex;          // Index to current first unread byte
+    int writeIndex;         // Index to the position after last unread byte
+    Channel* ownerChannel;  // Associated Channel
 
   public:
     int readN(int n, void* outerBuf) {
@@ -28,4 +28,11 @@ class Buffer {
       }
       return nbytes;
     }
+
+    /* Get pointer to read position*/
+    void* readPtr() { return &buf[readIndex];}
+
+    /* Get pointer to write position*/
+    void* writePtr() { return &buf[writeIndex];}
+    
 };
