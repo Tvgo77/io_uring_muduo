@@ -8,6 +8,7 @@
 class Buffer {
   private:
     std::vector<char> buf;  // A vector of char used for storing buffer data
+    std::vector<char> unprocessData;  // A buffer to store the read but unprocessed data
     int readIndex;          // Index to current first unread byte
     int writeIndex;         // Index to the position after last unread byte
     Channel* ownerChannel;  // Associated Channel
@@ -37,6 +38,11 @@ class Buffer {
         readIndex += nbytes;
       }
       return nbytes;
+    }
+
+    /* Add writeIndex */
+    void add_writeIndex(int n) {
+      writeIndex += n;
     }
 
     /* Get pointer to read position*/

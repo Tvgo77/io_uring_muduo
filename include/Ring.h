@@ -40,6 +40,9 @@ class Ring {
     Fill Channels which get a event into active channelList of EventLoop */
     void monitor(int timeoutMs, EventList* activeEvents, int* numEventsPtr);
 
+    /* Get pointer to io_uring instance */
+    struct io_uring* get_io_uring_ptr() { return &ring; }
+
     /* Debug and Test use*/
     int submitNum = 0;
 

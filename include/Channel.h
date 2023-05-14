@@ -2,6 +2,7 @@
 
 #include <include/EventLoop.h>
 #include <include/Buffer.h>
+#include <unistd.h>
 #include <map>
 
 /* Macro define for Event type*/
@@ -17,12 +18,14 @@
 typedef std::map<int, bool> InterestEventMap;
 typedef std::vector<struct io_uring_sqe*> SqeList;
 
+
+/* Should be dynamically allocated. Use smart pointer to manage its destory */
 class Channel {
   private:
     const int fd;  // Associated file descriptor
     InterestEventMap interestEvents;  // A set of event types which this channel expect to monitor
-    SqeList sqeList;
-    std::vector<EventOwner> eventOwners;
+    SqeList sqeList;  // A bunch of event prepare to submit, corresponding to interestEvents
+    std::vector<EventOwner> eventOwners;  // Where user_data of sqe points to
     int receivedEvent;   // The type of events received from the ring
     int returnVal;  // The return value of the submitted system call. Usally an int
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap
@@ -52,9 +55,9 @@ class Channel {
     void handle_event();
 
     /* Handle read, write, accept*/
-    void handle_read() const;
-    void handle_write() const;
-    void handle_accept() const;
+    void handle_read();
+    void handle_write();
+    void handle_accept();
 
     /* Set receivedEvent number*/
     void set_receivedEvent(int eventType) { receivedEvent = eventType;}
