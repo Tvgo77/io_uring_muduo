@@ -1,4 +1,5 @@
 #include <include/Channel.h>
+#include <memory>
 #include <string>
 
 
@@ -89,6 +90,24 @@ void Channel::submit_events() {
                 case EVENT_WRITE:
                     break;
                 case EVENT_ACCEPT:
+                    /* Accept TCP connection on listening fd */
+                    struct sockaddr_storage unused_addr;
+                    socklen_t unused_addrlen = sizeof(unused_addr);
+                    ::io_uring_prep_accept(sqeList[i], 
+                                           fd, 
+                                           (struct sockaddr*)&unused_addr, 
+                                           &unused_addrlen,
+                                           0 );
+                    
+                    /* Set user_data points to eventOwner */
+                    eventOwners[i].eventType = EVENT_ACCEPT;
+                    io_uring_sqe_set_data(sqeList[i], &eventOwners[i]);
+
+                    /* Change state to isMonitoring == true */
+                    pair.second = true;
+
+                    /* Log preparing complete */  
+                    printf("Log: fd %d read event prepared\n", fd);
                     break;
                 default:
                     break;    
@@ -117,7 +136,7 @@ void Channel::handle_read() {
     /* returnVal means the number of bytes read*/
     /* Error handling*/
     if (returnVal < 0) {
-        printf("Error: fd %d read error occured\n");
+        printf("Error: read fd %d read error occured\n");
 
         /* Remove channel from ring*/
         auto ring = ownerLoop->get_ring_ptr();
@@ -130,7 +149,7 @@ void Channel::handle_read() {
     }
 
     else if (returnVal == 0) {
-        printf("Log: fd %d EOF detect. Close socket and remove Channel\n");
+        printf("Log: read fd %d EOF detect. Close socket and remove Channel\n");
 
         auto ring = ownerLoop->get_ring_ptr();
         ring->removeChannel(this);
@@ -162,6 +181,30 @@ void Channel::handle_read() {
 
         /* Save unprocessed data into buffer */
         buffer.write_unprocessed(&buf[stringHeadIndex], i - stringHeadIndex);
+    }
+}
+
+void Channel::handle_accept() {
+    /* returnVal means the fd number of connection socket*/
+    /* Error handling*/
+    if (returnVal < 0) {
+        printf("Error: listening fd %d accept error occured\n");
+
+        /* Remove channel from ring*/
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+
+        /* Close related fd*/
+        ::close(fd);
+
+        /* Check if "this" pointer is the last one pointed to Channel*/
+    }
+    else {
+        /* Dynamicall allocate a new channel */
+        std::shared_ptr<Channel> tcpChannel(new Channel(ownerLoop, returnVal));
+
+        /* Enable read for this channel */
+        tcpChannel->enable_read();
     }
 }
 
