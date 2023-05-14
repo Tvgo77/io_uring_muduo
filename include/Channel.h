@@ -3,13 +3,24 @@
 #include <include/EventLoop.h>
 #include <map>
 
+/* Macro define for Event type*/
+#define EVENT_READ IORING_OP_READ
+#define EVENT_WRITE IORING_OP_WRITE
+#define EVENT_ACCEPT IORING_OP_ACCEPT
+
+/* Macro define for registerFlag*/
+#define NEW 0
+#define ADDED 1
+
 
 typedef std::map<int, bool> InterestEventMap;
+typedef std::vector<struct io_uring_sqe*> SqeList;
 
 class Channel {
   private:
     const int fd;  // Associated file descriptor
     InterestEventMap interestEvents;  // A set of event types which this channel expect to monitor
+    SqeList sqeList;
     int receivedEvent;   // The type of events received from the ring
     int returnVal;  // The return value of the submitted system call. Usally an int
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap

@@ -27,7 +27,7 @@ May The Goddess of Creator bless my code!
 
 
 Single thread I/O Multiplexing using io_uring
-Version 1.1.3
+Version 1.1.4
 
 Main Class
 include
@@ -56,6 +56,7 @@ Channel
 |   |-- key: int eventType      (The type of event)
 |   \-- value: bool isMonitoring  (Indicate if this event is now being monitored)
 |
+|-- sqeList            (A vector of sqe pointer for ring to use)
 |-- int receivedEvent  (The type of events received from the ring. Handle one event one time)
 |-- int returnVal      (The return value of the submitted system call. Usally an int)
 |-- int registerFlag   (Mainly used to indicate if channel has been added to a Ring's ChannelMap)
