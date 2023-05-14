@@ -11,13 +11,16 @@ class Buffer {
     std::vector<char> unprocessData;  // A buffer to store the read but unprocessed data
     int readIndex;          // Index to current first unread byte
     int writeIndex;         // Index to the position after last unread byte
+    int unprocessBytes;     // Number of unprocessed bytes in unprocessData buffer
     Channel* ownerChannel;  // Associated Channel
 
   public:
     Buffer(Channel* channel)
       : buf(BUF_SIZE),
+        unprocessData(BUF_SIZE),
         readIndex(0),
         writeIndex(0),
+        unprocessBytes(0),
         ownerChannel(channel) {}
       
     ~Buffer() {}
@@ -37,6 +40,17 @@ class Buffer {
         ::memcpy(outerBuf, &buf[readIndex], nbytes);
         readIndex += nbytes;
       }
+      return nbytes;
+    }
+
+    /* Get number of unporcessed bytes */
+    int num_unprocessed() { return unprocessBytes; }
+
+    /* Read unprocessed data */
+    int read_unprocessed(void* outerBuf) {
+      ::memcpy(outerBuf, &unprocessData[0], unprocessBytes);
+      int nbytes = unprocessBytes;
+      unprocessBytes = 0;
       return nbytes;
     }
 

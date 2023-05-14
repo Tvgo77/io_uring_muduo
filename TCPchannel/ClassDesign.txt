@@ -27,7 +27,7 @@ May The Goddess of Creator bless my code!
 
 
 Single thread I/O Multiplexing using io_uring
-Version 1.2
+Version 1.2.2
 
 Main Class
 include
@@ -79,6 +79,8 @@ TCPserver
 
 Buffer
 |-- buf             (A vector of char used for storing buffer data)
+|-- unprocessData   (A buffer to store the read but unprocessed data)
 |-- int readIndex   (Index to current first unread byte)
 |-- int writeIndex  (Index to the position after last unread byte)
+|-- int unprocessBytes  (Number of unprocessed bytes in unprocessData buffer)
 \-- ownerChannel    (Associated Channel)
