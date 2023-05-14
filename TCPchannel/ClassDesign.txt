@@ -27,7 +27,7 @@ May The Goddess of Creator bless my code!
 
 
 Single thread I/O Multiplexing using io_uring
-Version 1.1.4
+Version 1.2
 
 Main Class
 include
@@ -36,7 +36,8 @@ include
 |-- Channel.h    (include event associated fd and handle received event)
 |-- TCPsocket.h  (General tpye of tcp socket)
 |-- TCPserver.h  (One accept connection and maintain all activate connections)
-\-- Acceptor.h   (One specifically used by server to accept connection)
+|-- Acceptor.h   (One specifically used by server to accept connection)
+\-- Buffer.h     (One buffer the data from read operation)
 
 EventLoop
 |-- Ring *         (Work as epoll to monitor and return events)
@@ -60,6 +61,7 @@ Channel
 |-- int receivedEvent  (The type of events received from the ring. Handle one event one time)
 |-- int returnVal      (The return value of the submitted system call. Usally an int)
 |-- int registerFlag   (Mainly used to indicate if channel has been added to a Ring's ChannelMap)
+|-- Buffer             (A buffer to store read data)
 \-- EventLoop *        (Associated EventLoop)
 
 Acceptor
@@ -74,3 +76,9 @@ TCPserver
 |-- String address  (Address of server indicated in string format)
 |-- Acceptor *      (Associated Acceptor)
 \-- ConnectionMap   (A map of all activate connections)
+
+Buffer
+|-- buf             (A vector of char used for storing buffer data)
+|-- char* readPtr   (Point to current first unread byte)
+|-- char* writePtr  (Point to the position after last unread byte)
+\-- ownerChannel    (Associated Channel)
