@@ -2,20 +2,15 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "Build Target",
-            "command": "/usr/bin/gcc",
+            "label": "Build C++ Target",
+            "command": "/usr/bin/g++",
             "args": [
-                "-I", ".",
-                "-I", "../include/",
                 "-w",
                 "-fdiagnostics-color=always",
-                // "-pthread",
                 "-g",
-                "${file}", "../src/csapp.c",
+                "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
-                "-lpthread",
-                "`pkg-config --cflags --libs glib-2.0`"
+                "${workspaceFolder}/build/${fileBasenameNoExtension}",
             ],
             "options": {
                 "cwd": "${fileDirname}"

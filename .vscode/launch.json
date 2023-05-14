@@ -25,6 +25,28 @@
                 "ignoreFailures": true
             }
         ]
+    },
+
+    {
+        "preLaunchTask": "Build C++ Target",
+        "name": "gdb c++",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+        "args": ["test_text.txt"],
+        "stopAtEntry": false,
+        "cwd": "${fileDirname}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+        "setupCommands": [
+            // {
+            //     "description": "Enable pretty-printing for gdb",
+            //     "text": "-enable-pretty-printing",
+            //     "ignoreFailures": true
+            // }
+        ]
     }
     ]
 }
