@@ -79,6 +79,6 @@ TCPserver
 
 Buffer
 |-- buf             (A vector of char used for storing buffer data)
-|-- char* readPtr   (Point to current first unread byte)
-|-- char* writePtr  (Point to the position after last unread byte)
+|-- int readIndex   (Point to current first unread byte)
+|-- int writeIndex  (Point to the position after last unread byte)
 \-- ownerChannel    (Associated Channel)
