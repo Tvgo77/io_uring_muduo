@@ -13,7 +13,7 @@ class EventLoop {
   const int waitTimeSec = 10;
 
   private:  // Private member variables.
-    std::unique_ptr<Ring> uring;  // Work as epoll to monitor and return events
+    std::shared_ptr<Ring> uring;  // Work as epoll to monitor and return events
     EventList activateEvents;  // A pointer to vector of events which have occurred
     int numEvents;  // The number of events of vector that pointer points to
     Event currentEvent;      // Current handling event
@@ -31,5 +31,8 @@ class EventLoop {
 
     /* Quit loop*/
     void quit();
+
+    /* Get pointer to ring */
+    std::shared_ptr<Ring> get_ring_ptr() { return uring; }
 
 };
