@@ -1,0 +1,3 @@
+This is an attemptation to replace epoll's character in Muduo (https://github.com/chenshuo/muduo) with the io_uring structure (https://github.com/axboe/liburing)
+
+The reconstruction is only based on single thread to test I/O multiplexing performance of io_uring compared to the original epoll implementation.
