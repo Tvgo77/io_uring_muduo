@@ -21,7 +21,7 @@ void Ring::addChannel(std::shared_ptr<Channel> channel) {
 }
 
 
-void Ring::removeChannel(std::shared_ptr<Channel> channel) {
+void Ring::removeChannel(Channel* channel) {
     int fd = channel->get_fd();
     channelDict.erase(fd);
 }

@@ -41,7 +41,7 @@ class Ring {
     void updateChannel(const Channel* channel) { ; }  // Not implemented now
 
     /* Remove a channle in io_uring*/
-    void removeChannel(std::shared_ptr<Channel> channel);
+    void removeChannel(Channel* channel);
 
     /* Monitor events occurred in channel. 
     Fill Channels which get a event into active channelList of EventLoop */

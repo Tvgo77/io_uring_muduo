@@ -42,7 +42,7 @@ void Channel::disable_read() {
     /* If no interestEvents, remove it from Ring*/
     if (interestEvents.empty()) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(std::shared_ptr<Channel>(this));
+        ring->removeChannel(this);
         registerFlag = NEW;
     }
 }
@@ -65,7 +65,7 @@ void Channel::disable_accept() {
     /* If no interestEvents, remove it from Ring */
     if (interestEvents.empty()) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(std::shared_ptr<Channel>(this));
+        ring->removeChannel(this);
         registerFlag = NEW;
     }
 }
@@ -145,25 +145,26 @@ void Channel::handle_read() {
     /* returnVal means the number of bytes read*/
     /* Error handling*/
     if (returnVal < 0) {
-        printf("Error: read fd %d read error occured\n");
-
-        /* Remove channel from ring*/
-        auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(std::shared_ptr<Channel>(this));
+        printf("Error: read fd %d read error occured\n", fd);
 
         /* Close related fd*/
         ::close(fd);
+
+        /* Remove channel from ring*/
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
 
         /* Check if "this" pointer is the last one pointed to Channel*/
     }
 
     else if (returnVal == 0) {
-        printf("Log: read fd %d EOF detect. Close socket and remove Channel\n");
-
-        auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(std::shared_ptr<Channel>(this));
+        printf("Log: read fd %d EOF detect. Close socket and remove Channel\n", fd);
 
         ::close(fd);
+
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+
     }
 
     else if (returnVal > 0) {
@@ -199,12 +200,13 @@ void Channel::handle_accept() {
     if (returnVal < 0) {
         printf("Error: listening fd %d accept error occured\n", fd);
 
-        /* Remove channel from ring*/
-        auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(std::shared_ptr<Channel>(this));
-
         /* Close related fd*/
         ::close(fd);
+
+        /* Remove channel from ring*/
+        auto ring = ownerLoop->get_ring_ptr();
+        ring->removeChannel(this);
+
 
         /* Check if "this" pointer is the last one pointed to Channel*/
     }
