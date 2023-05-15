@@ -73,7 +73,7 @@ void Channel::submit_events() {
         if (pair.second == false) {
             sqeList[i] = ::io_uring_get_sqe(ring->get_io_uring_ptr());
             switch (pair.first) {  // May change to use map if too many event types
-                case EVENT_READ:
+                case EVENT_READ: {
                     /* Read data to inner buffer */
                     ::io_uring_prep_read(sqeList[i], fd, buffer.writePtr(), BUF_SIZE/2, 0);
 
@@ -87,9 +87,10 @@ void Channel::submit_events() {
                     /* Log preparing complete */  
                     printf("Log: fd %d read event prepared\n", fd);
                     break;
+                }
                 case EVENT_WRITE:
                     break;
-                case EVENT_ACCEPT:
+                case EVENT_ACCEPT: {
                     /* Accept TCP connection on listening fd */
                     struct sockaddr_storage unused_addr;
                     socklen_t unused_addrlen = sizeof(unused_addr);
@@ -109,6 +110,7 @@ void Channel::submit_events() {
                     /* Log preparing complete */  
                     printf("Log: fd %d read event prepared\n", fd);
                     break;
+                }
                 default:
                     break;    
             }

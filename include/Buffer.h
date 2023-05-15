@@ -1,8 +1,12 @@
+#pragma once
+
 #include <vector>
 #include <include/Channel.h>
 #include <string.h>
 
 #define BUF_SIZE 2048
+
+class Channel;
 
 /* All member function are implemented inline*/
 class Buffer {

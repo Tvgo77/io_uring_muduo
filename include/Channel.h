@@ -18,6 +18,9 @@
 typedef std::map<int, bool> InterestEventMap;
 typedef std::vector<struct io_uring_sqe*> SqeList;
 
+struct EventOwner;
+class EventLoop;
+
 
 /* Should be dynamically allocated. Use smart pointer to manage its destory */
 class Channel {
@@ -56,7 +59,7 @@ class Channel {
 
     /* Handle read, write, accept*/
     void handle_read();
-    void handle_write();
+    void handle_write() {};  // Not implemented
     void handle_accept();
 
     /* Set receivedEvent number*/

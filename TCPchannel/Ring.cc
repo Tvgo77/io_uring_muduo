@@ -20,7 +20,6 @@ void Ring::addChannel(Channel* channel) {
     channelDict[fd] = channel;
 }
 
-void Ring::updateChannel(const Channel* channel) {;}
 
 void Ring::removeChannel(Channel* channel) {
     int fd = channel->get_fd();

@@ -9,6 +9,9 @@
 typedef struct io_uring_cqe** EventList;
 typedef struct io_uring_cqe* Event;
 
+class Ring;
+class Channel;
+
 class EventLoop {
   const int waitTimeSec = 10;
 

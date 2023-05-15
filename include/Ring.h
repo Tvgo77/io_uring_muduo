@@ -7,6 +7,12 @@
 
 #define MAX_EVENT 256
 
+class Channel;
+class EventLoop;
+
+typedef struct io_uring_cqe** EventList;
+typedef struct io_uring_cqe* Event;
+
 /* EventOwner is used for cqe to determine its owner and event type*/
 struct EventOwner {
   Channel* channel;
