@@ -20,8 +20,8 @@ int main() {
     io_uring_queue_init(MAX_ENTRY, &ring, 0); 
 
     /* Submit request events like read and write to the SQ ring*/
-    struct io_uring_sqe *sqe1;
-    struct io_uring_sqe *sqe2;
+    struct io_uring_sqe *sqe1 = NULL;
+    struct io_uring_sqe *sqe2 = NULL;
     struct io_uring_cqe *cqe;
     struct io_uring_cqe **cqeList;
     // This function fill the field of struct io_uring_sqe
@@ -35,7 +35,7 @@ int main() {
     
     char buf[BUF_SIZE];  // read buffer
     // This function also fill fields of struct io_uring_sqe
-    io_uring_prep_read(sqe1, fd1, buf, 6, 0);
+    io_uring_prep_read(sqe1, fd1, buf, 7, 0);
     io_uring_prep_read(sqe2, fd2, buf, 6, 0);
     sqe1->user_data = (unsigned long) (&fd1_obj);
     sqe2->user_data = (unsigned long) (&fd2_obj);
