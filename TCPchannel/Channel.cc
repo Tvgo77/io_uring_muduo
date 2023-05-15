@@ -99,9 +99,8 @@ void Channel::submit_events() {
                     /* Accept TCP connection on listening fd */
                     // The submit of accept event is not in this scope.
                     // So make sure the sockaddr pointer is valid before the final submit
-                    // Do not worry about memory leak since they are only create once.
-                    struct sockaddr_storage* unused_addr = new sockaddr_storage;
-                    socklen_t* unused_addrlen = new unsigned int(sizeof(sockaddr_storage));
+                    struct sockaddr_storage* unused_addr = &addr;
+                    socklen_t* unused_addrlen = &addrlen;
                     ::io_uring_prep_accept(sqeList[i], 
                                            fd, 
                                            (struct sockaddr*) unused_addr, 

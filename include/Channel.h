@@ -4,6 +4,7 @@
 #include <include/Buffer.h>
 #include <unistd.h>
 #include <map>
+#include <sys/socket.h>
 
 /* Macro define for Event type*/
 #define EVENT_READ IORING_OP_READ
@@ -34,6 +35,9 @@ class Channel {
     int registerFlag;    // Mainly used to indicate if channel has been added to a Ring's ChannelMap
     Buffer buffer;
     EventLoop* ownerLoop;  // Associated EventLoop
+
+    struct sockaddr_storage addr;
+    socklen_t addrlen = sizeof(sockaddr_storage);
 
   public:
     Channel(EventLoop* loop, int fd);
