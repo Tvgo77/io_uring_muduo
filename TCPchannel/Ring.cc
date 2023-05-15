@@ -32,10 +32,10 @@ void Ring::monitor(int timeoutSec, EventList* activeEvents, int* numEventsPtr) {
         Channel* channel = pair.second;
         channel->submit_events();
     }
-    ::io_uring_submit(&ring);
+    int totalSubmit = ::io_uring_submit(&ring);
 
     /* Log number of events submitted */
-    ::printf("Log: Total %d events submitted in one loop");
+    ::printf("Log: Total %d events submitted in one loop\n", totalSubmit);
 
     /* Initialize struct io_uring_cqe * for receiving events*/
     struct io_uring_cqe *cqe;
@@ -46,7 +46,8 @@ void Ring::monitor(int timeoutSec, EventList* activeEvents, int* numEventsPtr) {
     /* Wait for occured events */
     eventList.clear();
     // This function will block until at least one event returned or Timeout
-    ::io_uring_wait_cqe_timeout(&ring, &cqe, &timeout);  
+    ::io_uring_wait_cqe_timeout(&ring, &cqe, &timeout); 
+    ::printf("return value: %d\n", cqe->res);
     // This function return the number of occurred events and make ptr point to first one
     int numEvents = ::io_uring_peek_batch_cqe(&ring, &eventList[0], MAX_EVENT);
 
@@ -55,5 +56,5 @@ void Ring::monitor(int timeoutSec, EventList* activeEvents, int* numEventsPtr) {
     *numEventsPtr = numEvents;
 
     /* Log events occur*/
-    ::printf("Log: %d events occurred");
+    ::printf("Log: %d events occurred\n", numEvents);
 }

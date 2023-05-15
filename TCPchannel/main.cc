@@ -19,7 +19,7 @@ int main() {
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = ::htons(port);
     ::bind(listenfd, (struct sockaddr*) &serverAddr, sizeof(serverAddr));
-    ::listen(listenfd, 256);
+    int result = ::listen(listenfd, 256);
 
     /* Allocate Channel use listen socket and EventLoop */
     std::shared_ptr<Channel> channel(new Channel(&eventLoop, listenfd));

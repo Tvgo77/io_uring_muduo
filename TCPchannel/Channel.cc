@@ -82,7 +82,7 @@ void Channel::submit_events() {
                     io_uring_sqe_set_data(sqeList[i], &eventOwners[i]);
 
                     /* Change state to isMonitoring == true */
-                    pair.second = true;
+                    interestEvents[pair.first] = true;
 
                     /* Log preparing complete */  
                     printf("Log: fd %d read event prepared\n", fd);
@@ -92,23 +92,26 @@ void Channel::submit_events() {
                     break;
                 case EVENT_ACCEPT: {
                     /* Accept TCP connection on listening fd */
-                    struct sockaddr_storage unused_addr;
-                    socklen_t unused_addrlen = sizeof(unused_addr);
+                    // The submit of accept event is not in this scope.
+                    // So make sure the sockaddr pointer is valid before the final submit
+                    // Do not worry about memory leak since they are only create once.
+                    struct sockaddr_storage* unused_addr = new sockaddr_storage;
+                    socklen_t* unused_addrlen = new unsigned int(sizeof(sockaddr_storage));
                     ::io_uring_prep_accept(sqeList[i], 
                                            fd, 
-                                           (struct sockaddr*)&unused_addr, 
-                                           &unused_addrlen,
-                                           0 );
+                                           (struct sockaddr*) unused_addr, 
+                                           unused_addrlen,
+                                           0);
                     
                     /* Set user_data points to eventOwner */
                     eventOwners[i].eventType = EVENT_ACCEPT;
                     io_uring_sqe_set_data(sqeList[i], &eventOwners[i]);
 
                     /* Change state to isMonitoring == true */
-                    pair.second = true;
+                    interestEvents[pair.first] = true;
 
                     /* Log preparing complete */  
-                    printf("Log: fd %d read event prepared\n", fd);
+                    printf("Log: fd %d accept event prepared\n", fd);
                     break;
                 }
                 default:
@@ -190,7 +193,7 @@ void Channel::handle_accept() {
     /* returnVal means the fd number of connection socket*/
     /* Error handling*/
     if (returnVal < 0) {
-        printf("Error: listening fd %d accept error occured\n");
+        printf("Error: listening fd %d accept error occured\n", fd);
 
         /* Remove channel from ring*/
         auto ring = ownerLoop->get_ring_ptr();
