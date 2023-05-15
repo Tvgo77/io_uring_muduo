@@ -22,7 +22,7 @@ int main() {
     int result = ::listen(listenfd, 256);
 
     /* Allocate Channel use listen socket and EventLoop */
-    std::shared_ptr<Channel> channel(new Channel(&eventLoop, listenfd));
+    Channel* channel = new Channel(&eventLoop, listenfd);
 
     /* Enable accept for listening Channel */
     channel->enable_accept();

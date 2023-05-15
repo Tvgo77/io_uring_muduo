@@ -15,13 +15,13 @@ Ring::~Ring() {
     ::close(ring.ring_fd);
 }
 
-void Ring::addChannel(Channel* channel) {
+void Ring::addChannel(std::shared_ptr<Channel> channel) {
     int fd = channel->get_fd();
     channelDict[fd] = channel;
 }
 
 
-void Ring::removeChannel(Channel* channel) {
+void Ring::removeChannel(std::shared_ptr<Channel> channel) {
     int fd = channel->get_fd();
     channelDict.erase(fd);
 }
@@ -29,7 +29,7 @@ void Ring::removeChannel(Channel* channel) {
 void Ring::monitor(int timeoutSec, EventList* activeEvents, int* numEventsPtr) {
     /* Submit all channels' events expected for monitoring */
     for (auto pair: channelDict) {
-        Channel* channel = pair.second;
+        std::shared_ptr<Channel> channel = pair.second;
         channel->submit_events();
     }
     int totalSubmit = ::io_uring_submit(&ring);
@@ -47,7 +47,6 @@ void Ring::monitor(int timeoutSec, EventList* activeEvents, int* numEventsPtr) {
     eventList.clear();
     // This function will block until at least one event returned or Timeout
     ::io_uring_wait_cqe_timeout(&ring, &cqe, &timeout); 
-    ::printf("return value: %d\n", cqe->res);
     // This function return the number of occurred events and make ptr point to first one
     int numEvents = ::io_uring_peek_batch_cqe(&ring, &eventList[0], MAX_EVENT);
 

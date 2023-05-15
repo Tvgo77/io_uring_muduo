@@ -22,7 +22,11 @@ void Channel::enable_read() {
     /* Have not added to a ring*/
     if (registerFlag == NEW) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->addChannel(this);
+        // Create a shared_ptr to channel and copy it to ChannelDict of Ring
+        // Then the shared_ptr in Ring's Channel Map will be the only one
+        // So we can destory the dynamically allocated Channel by remove it from Ring
+        std::shared_ptr<Channel> channelPtr(this);
+        ring->addChannel(channelPtr);
         registerFlag = ADDED;
     }
 
@@ -38,7 +42,7 @@ void Channel::disable_read() {
     /* If no interestEvents, remove it from Ring*/
     if (interestEvents.empty()) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(this);
+        ring->removeChannel(std::shared_ptr<Channel>(this));
         registerFlag = NEW;
     }
 }
@@ -49,7 +53,8 @@ void Channel::enable_accept() {
     /* Have not added to a ring*/
     if (registerFlag == NEW) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->addChannel(this);
+        std::shared_ptr<Channel> channelPtr(this);
+        ring->addChannel(channelPtr);
         registerFlag = ADDED;
     }
 }
@@ -60,7 +65,7 @@ void Channel::disable_accept() {
     /* If no interestEvents, remove it from Ring */
     if (interestEvents.empty()) {
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(this);
+        ring->removeChannel(std::shared_ptr<Channel>(this));
         registerFlag = NEW;
     }
 }
@@ -145,7 +150,7 @@ void Channel::handle_read() {
 
         /* Remove channel from ring*/
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(this);
+        ring->removeChannel(std::shared_ptr<Channel>(this));
 
         /* Close related fd*/
         ::close(fd);
@@ -157,7 +162,7 @@ void Channel::handle_read() {
         printf("Log: read fd %d EOF detect. Close socket and remove Channel\n");
 
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(this);
+        ring->removeChannel(std::shared_ptr<Channel>(this));
 
         ::close(fd);
     }
@@ -197,7 +202,7 @@ void Channel::handle_accept() {
 
         /* Remove channel from ring*/
         auto ring = ownerLoop->get_ring_ptr();
-        ring->removeChannel(this);
+        ring->removeChannel(std::shared_ptr<Channel>(this));
 
         /* Close related fd*/
         ::close(fd);
@@ -206,7 +211,7 @@ void Channel::handle_accept() {
     }
     else {
         /* Dynamicall allocate a new channel */
-        std::shared_ptr<Channel> tcpChannel(new Channel(ownerLoop, returnVal));
+        Channel* tcpChannel = new Channel(ownerLoop, returnVal);
 
         /* Enable read for this channel */
         tcpChannel->enable_read();

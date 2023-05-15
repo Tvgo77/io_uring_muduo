@@ -4,6 +4,7 @@
 #include <liburing.h>
 #include <vector>
 #include <map>
+#include <memory>
 
 #define MAX_EVENT 256
 
@@ -21,7 +22,7 @@ struct EventOwner {
 
 class Ring {
   typedef std::vector<struct io_uring_cqe *> CqeList;
-  typedef std::map<int, Channel*> ChannelMap;  // int Key is the fd number of Channel
+  typedef std::map<int, std::shared_ptr<Channel>> ChannelMap;  // int Key is the fd number of Channel
 
   private:  // private member variable
     struct io_uring ring;
@@ -34,13 +35,13 @@ class Ring {
     ~Ring();
 
     /* Add a channel to io_uring for monitoring events*/
-    void addChannel(Channel* channel);
+    void addChannel(std::shared_ptr<Channel> channel);
     
     /* Modify a channel in io_uring to change monitoring settings*/
     void updateChannel(const Channel* channel) { ; }  // Not implemented now
 
     /* Remove a channle in io_uring*/
-    void removeChannel(Channel* channel);
+    void removeChannel(std::shared_ptr<Channel> channel);
 
     /* Monitor events occurred in channel. 
     Fill Channels which get a event into active channelList of EventLoop */
