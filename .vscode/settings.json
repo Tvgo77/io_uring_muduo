@@ -5,6 +5,7 @@
         "limits": "c",
         "string.h": "c",
         "liburing.h": "c",
-        "io_uring.h": "c"
+        "io_uring.h": "c",
+        "syscall_wrap.h": "c"
     }
 }
