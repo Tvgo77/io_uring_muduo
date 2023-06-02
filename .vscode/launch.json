@@ -28,12 +28,12 @@
     },
 
     {
-        "preLaunchTask": "Build C++ Target",
+        "preLaunchTask": "Build syscall_wrap.h user",
         "name": "gdb c++",
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
-        "args": ["test_text.txt"],
+        // "args": ["test_text.txt"],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
         "environment": [],

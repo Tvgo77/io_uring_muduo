@@ -20,7 +20,7 @@ int main() {
 
 
     /* Files to read */
-    string fileDir("../file/");
+    string fileDir("./file/");  // Current working directory should be io_uring
     std::vector<string> fileList = {"f1", "f2", "f3", "f4", "f5"};
     std::vector<int> fdList(5, -1);  //  Initialize all file descriptor to -1;
 

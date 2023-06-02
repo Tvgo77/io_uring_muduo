@@ -64,6 +64,7 @@ Channel
 |-- Buffer             (A buffer to store read data)
 \-- EventLoop *        (Associated EventLoop)
 
+---------------------Unimplemented---------------------
 Acceptor
 |-- TCPsocket    (Socket used for accepting connections)
 |-- Channel *    (Associated Channel. Events on Acceptor need to be monitored)
@@ -76,6 +77,7 @@ TCPserver
 |-- String address  (Address of server indicated in string format)
 |-- Acceptor *      (Associated Acceptor)
 \-- ConnectionMap   (A map of all activate connections)
+--------------------------------------------------------
 
 Buffer
 |-- buf             (A vector of char used for storing buffer data)

@@ -1,5 +1,4 @@
 #include <include/Channel.h>
-#include <lib/syscall_wrap.h>
 #include <memory>
 #include <string>
 
@@ -185,8 +184,8 @@ void Channel::handle_read() {
                 continue;
             else {
                 std::string message(&buf[stringHeadIndex], i - stringHeadIndex + 1);
-                ::write(fd, &message[0], message.size());  // Send echo message back;
-                //::write(STDOUT_FILENO, &message[0], message.size());  // For file read send to stdout;
+                //::write(fd, &message[0], message.size());  // Send echo message back;
+                ::write(STDOUT_FILENO, &message[0], message.size());  // For file read send to stdout;
                 stringHeadIndex = i + 1;
             }
         }

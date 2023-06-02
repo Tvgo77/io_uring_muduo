@@ -6,7 +6,7 @@
 #include <map>
 #include <memory>
 
-#define MAX_EVENT 256
+#define MAX_EVENT 4096
 
 class Channel;
 class EventLoop;
