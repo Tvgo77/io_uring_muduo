@@ -2,6 +2,7 @@
 #include <include/Channel.h>
 #include <include/Ring.h>
 #include <vector>
+#include <string>
 #include <fcntl.h>
 
 using std::string;
